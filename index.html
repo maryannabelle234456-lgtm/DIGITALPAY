@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pluto AI</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      padding: 15px;
+      text-align: center;
+      background: #020617;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #chatBox {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      margin: 10px 0;
+      max-width: 75%;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .user {
+      background: #2563eb;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: #1e293b;
+      margin-right: auto;
+    }
+
+    .inputArea {
+      display: flex;
+      padding: 10px;
+      background: #020617;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>🤖 Pluto AI</header>
+
+<div id="chatBox"></div>
+
+<div class="inputArea">
+  <input type="text" id="userInput" placeholder="Type a message...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  const chatBox = document.getElementById("chatBox");
+
+  function addMessage(text, sender) {
+    let div = document.createElement("div");
+    div.className = "msg " + sender;
+    div.innerText = text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function sendMessage() {
+    let input = document.getElementById("userInput");
+    let text = input.value.trim();
+
+    if (!text) return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    setTimeout(() => {
+      let reply = getBotReply(text);
+      addMessage(reply, "bot");
+    }, 800);
+  }
+
+  function getBotReply(msg) {
+    msg = msg.toLowerCase();
+
+    if (msg.includes("hi") || msg.includes("hello")) {
+      return "Hey 👋 I'm Pluto AI. How can I help you?";
+    }
+
+    if (msg.includes("money")) {
+      return "You can make money online through skills, affiliate marketing, or content creation.";
+    }
+
+    if (msg.includes("love")) {
+      return "Love should come with consistency and respect, not confusion.";
+    }
+
+    if (msg.includes("code")) {
+      return "I can help you build apps, websites, and more 😎";
+    }
+
+       return "I’m Pluto AI 🤖 — still learning. Ask about money, love, or code!";
+    
+  }
+
+  // Enter key support
+  document.getElementById("userInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
+</script>
+
+</body>
+</html>
