@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Payment Dashboard</title>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+
+<body style="text-align:center; font-family:sans-serif;">
+
+  <h2>Welcome 👋</h2>
+
+  <!-- BALANCE SECTION -->
+  <h3>Your Balance:</h3>
+  <h1 id="balance" style="color:green;">₦300,000</h1>
+  <p style="color:gray;"></p>
+
+  <hr>
+
+  <!-- PAYMENT SECTION -->
+  <h2>Buy Product - ₦5,000</h2>
+
+  <form id="paymentForm">
+    <input type="text" id="name" placeholder="Your Name" required><br><br>
+    <input type="email" id="email" placeholder="Your Email" required><br><br>
+
+    <button type="submit">Pay Now</button>
+  </form>
+
+  <script>
+    const paymentForm = document.getElementById('paymentForm');
+
+    // Store balance in browse
+    let balance = 300000;
+
+    paymentForm.addEventListener("submit", payWithPaystack, false);
+
+    function payWithPaystack(e) {
+      e.preventDefault();
+
+      let handler = PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxx', // 🔴 PUT YOUR PAYSTACK PUBLIC KEY HERE
+        email: document.getElementById("email").value,
+        amount: 500000, // ₦5,000
+        currency: "NGN",
+
+        callback: function(response) {
+          alert("Payment successful! Ref: " + response.reference);
+
+          // 👉 Increase balance after payment
+          balance += 5000;
+
+          document.getElementById("balance").innerText = "₦" + balance.toLocaleString();
+        },
+
+        onClose: function() {
+          alert('Transaction cancelled');
+        }
+      });
+
+      handler.openIframe();
+    }
+  </script>
+
+</body>
+</html>
