@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DigitalPay</title>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+
+  <style>
+    body { font-family: Arial; margin:0; background:#f4f6f8; }
+
+    .center { text-align:center; padding:20px; }
+
+    .card {
+      background: linear-gradient(135deg,#1e90ff,#3742fa);
+      color:white;
+      padding:20px;
+      margin:20px;
+      border-radius:15px;
+    }
+
+    .btn {
+      padding:10px 20px;
+      border:none;
+      border-radius:10px;
+      background:#1e90ff;
+      color:white;
+      margin:5px;
+    }
+
+    input {
+      padding:10px;
+      margin:5px;
+      width:80%;
+    }
+
+    .hidden { display:none; }
+
+    .transaction {
+      background:white;
+      margin:10px;
+      padding:10px;
+      border-radius:10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="center">
+  <h2>DigitalPay Login</h2>
+  <input id="loginEmail" placeholder="Email"><br>
+  <button class="btn" onclick="login()">Login</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+
+  <div class="card">
+    <p>Balance</p>
+    <h2 id="balance">₦300,000</h2>
+    <small>(Real)</small>
+  </div>
+
+  <div class="center">
+    <button class="btn" onclick="pay()">Add Money</button>
+  </div>
+
+  <h3 style="margin-left:10px;">Transactions</h3>
+  <div id="txList"></div>
+
+</div>
+
+<!-- CHAT BUTTON -->
+<button onclick="openChat()" style="position:fixed;bottom:20px;right:20px;">💬</button>
+
+<!-- CHAT BOX -->
+<div id="chatBox" class="hidden" style="position:fixed;bottom:70px;right:20px;background:white;width:250px;border-radius:10px;">
+
+  <div style="background:#0a3d62;color:white;padding:10px;">
+    Support
+    <span onclick="closeChat()" style="float:right;cursor:pointer;">✖</span>
+  </div>
+
+  <div id="chatMessages" style="height:150px;overflow:auto;padding:10px;">
+    <p><b>Support:</b> Hello 👋</p>
+  </div>
+
+  <input id="chatInput" placeholder="Type message..." style="width:70%;">
+  <button onclick="sendMessage()">Send</button>
+
+</div>
+
+<script>
+let balance = localStorage.getItem("balance") || 300000;
+let transactions = JSON.parse(localStorage.getItem("tx")) || [];
+
+function login(){
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  updateUI();
+}
+
+function updateUI(){
+  document.getElementById("balance").innerText = "₦" + Number(balance).toLocaleString();
+
+  let html="";
+  transactions.forEach(t=>{
+    html += `<div class="transaction">${t.type} ₦${t.amount}</div>`;
+  });
+
+  document.getElementById("txList").innerHTML = html;
+
+  localStorage.setItem("balance", balance);
+  localStorage.setItem("tx", JSON.stringify(transactions));
+}
+
+function pay(){
+  let handler = PaystackPop.setup({
+    key:'pk_test_xxxxxxxxx', // PUT YOUR PAYSTACK KEY
+    email:'user@email.com',
+    amount:500000,
+    currency:"NGN",
+
+    callback:function(){
+      balance = Number(balance) + 5000;
+      transactions.unshift({type:"Credit",amount:5000});
+      updateUI();
+      alert("Payment successful");
+    }
+  });
+
+  handler.openIframe();
+}
+
+function openChat(){
+  document.getElementById("chatBox").style.display="block";
+}
+
+function closeChat(){
+  document.getElementById("chatBox").style.display="none";
+}
+
+function sendMessage(){
+  let msg = document.getElementById("chatInput").value;
+  if(!msg) return;
+
+  let chat = document.getElementById("chatMessages");
+
+  chat.innerHTML += "<p><b>You:</b> "+msg+"</p>";
+
+  setTimeout(()=>{
+    chat.innerHTML += "<p><b>Support:</b> We'll respond shortly</p>";
+  },1000);
+
+  document.getElementById("chatInput").value="";
+}
+
+updateUI();
+</script>
+
+</body>
+</html>
